@@ -36,6 +36,11 @@ let db;
       )
     `);
     console.log("Created tables");
+
+    const listener = app.listen(process.env.PORT || 3000, () => {
+      console.log('Your app is listening on port ' + listener.address().port)
+    })
+
   } catch (err) {
     console.error('Error during database creation: ', err)
   }
@@ -153,7 +158,3 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log('Your app is listening on port ' + listener.address().port)
-})
