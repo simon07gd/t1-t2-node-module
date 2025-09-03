@@ -49,7 +49,7 @@ app.post('/api/users', async(req, res) => {
 
   try {
     const result = await db.run('INSERT INTO users (username) VALUES (?)', [username]);
-    const newUser = await db.get('SELECT id as _id, username FROM users WHERE id = ?', [result.lastID]);
+    const newUser = await db.get('SELECT username, id as _id FROM users WHERE id = ?', [result.lastID]);
     res.json(newUser);
   } catch (err) {
     if (err.message.includes('UNIQUE constraint failed')) {
