@@ -82,15 +82,26 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
     return res.status(400).send('Description and duration are required.');
   }
 
+  if (isNaN(duration) || duration < 0) {
+    return res.status(400).send('Duration must be a valid number')
+  }
+
   try {
     const user = await db.get('SELECT id as _id, username FROM users WHERE id = ?', [_id]);
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-    // If date is not provided, use today's date.
-    // Store as ISO string for proper sorting in database.
-    const exerciseDate = date ? new Date(date) : new Date();
+    let exerciseDate;
+    if (date) {
+      const parsed = new Date(date);
+      if (isNaN(parsed)) {
+        return res.status(400).send('Invalid date format.');
+      }
+      exerciseDate = parsed
+    } else {
+      exerciseDate = new Date();
+    }
 
     const sql = 'INSERT INTO exercises (userId, description, duration, date) VALUES (?, ?, ?, ?)';
     await db.run(sql, [user._id, description, parseInt(duration), exerciseDate.toISOString()]);
